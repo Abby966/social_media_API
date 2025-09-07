@@ -86,3 +86,19 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment({self.id}) by {self.user.username} on Post({self.post_id})"
+        class Bookmark(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookmarks")
+    post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="bookmarks")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "post"], name="uniq_bookmark"),
+        ]
+        indexes = [
+            models.Index(fields=["user", "-created_at"]),
+            models.Index(fields=["post"]),
+        ]
+
+    def __str__(self):
+        return f"Bookmark(user={self.user.username}, post={self.post_id})"
