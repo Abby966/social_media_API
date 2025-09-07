@@ -4,10 +4,12 @@ from rest_framework.routers import DefaultRouter
 
 from posts.views import (
     PostViewSet,
-    CommentViewSet,   # ← make sure this import is present
+    CommentViewSet, 
     FollowViewSet,
     FeedViewSet,
 )
+from posts.views import CommentViewSet
+router.register(r"comments", CommentViewSet, basename="comments")
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
