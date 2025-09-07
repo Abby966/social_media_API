@@ -4,12 +4,10 @@ from rest_framework.routers import DefaultRouter
 
 from posts.views import (
     PostViewSet,
-    CommentViewSet, 
+    CommentViewSet,  
     FollowViewSet,
     FeedViewSet,
 )
-from posts.views import CommentViewSet
-router.register(r"comments", CommentViewSet, basename="comments")
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
@@ -17,7 +15,7 @@ from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r"posts", PostViewSet, basename="posts")
-router.register(r"comments", CommentViewSet, basename="comments")  # ← THIS LINE creates /api/comments/
+router.register(r"comments", CommentViewSet, basename="comments")  # 👈 this creates /api/comments/
 router.register(r"follow", FollowViewSet, basename="follow")
 router.register(r"feed",  FeedViewSet,  basename="feed")
 
