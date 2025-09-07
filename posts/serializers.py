@@ -1,12 +1,13 @@
 from rest_framework import serializers
-from .models import Post, Follow, Like, Comment
-
+from .models import Post, Follow, Like, Comment, Bookmark  # ⬅️ added Bookmark
 
 class PostSerializer(serializers.ModelSerializer):
     author_username = serializers.ReadOnlyField(source="author.username")
-    # NEW: show number of likes & comments
     likes_count = serializers.IntegerField(source="likes.count", read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
+    # NEW 👇
+    bookmarks_count = serializers.IntegerField(source="bookmarks.count", read_only=True)
+    is_bookmarked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -17,9 +18,11 @@ class PostSerializer(serializers.ModelSerializer):
             "content",
             "media_url",
             "created_at",
-            "updated_at",     # NEW: added updated_at from model
-            "likes_count",    # NEW
-            "comments_count", # NEW
+            "updated_at",
+            "likes_count",
+            "comments_count",
+            "bookmarks_count",  # NEW
+            "is_bookmarked",    # NEW
         ]
         read_only_fields = [
             "author",
@@ -28,7 +31,15 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
             "likes_count",
             "comments_count",
+            "bookmarks_count",
+            "is_bookmarked",
         ]
+
+    def get_is_bookmarked(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.bookmarks.filter(user=request.user).exists()
 
     def validate_content(self, value):
         if not value or not value.strip():
@@ -53,7 +64,6 @@ class FollowSerializer(serializers.ModelSerializer):
         read_only_fields = ["follower", "created_at"]
 
 
-# NEW: Like serializer
 class LikeSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source="user.username")
 
@@ -63,7 +73,6 @@ class LikeSerializer(serializers.ModelSerializer):
         read_only_fields = ["user", "created_at"]
 
 
-# NEW: Comment serializer
 class CommentSerializer(serializers.ModelSerializer):
     user_username = serializers.ReadOnlyField(source="user.username")
 
