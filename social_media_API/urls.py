@@ -1,11 +1,10 @@
-# social_media_API/urls.py  (PROJECT-LEVEL)
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from posts.views import (
     PostViewSet,
-    CommentViewSet,   # ← make sure this import resolves
+    CommentViewSet,   # ← make sure this import is present
     FollowViewSet,
     FeedViewSet,
 )
@@ -20,7 +19,7 @@ from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r"posts", PostViewSet, basename="posts")
-router.register(r"comments", CommentViewSet, basename="comments")  # ← THIS LINE
+router.register(r"comments", CommentViewSet, basename="comments")  # ← THIS LINE creates /api/comments/
 router.register(r"follow", FollowViewSet, basename="follow")
 router.register(r"feed",  FeedViewSet,  basename="feed")
 
